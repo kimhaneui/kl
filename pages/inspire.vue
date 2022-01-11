@@ -7,10 +7,9 @@
         class="mb-5"
       >
       <blockquote class="blockquote">
-        &#8220;First, solve the problem. Then, write the code.&#8221;
         <footer>
           <small>
-            <em>&mdash;John Johnson</em>
+            <p>{{user}}</p>
           </small>
         </footer>
       </blockquote>
@@ -19,7 +18,23 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
-  name: 'InspirePage'
+  name: 'InspirePage',
+    data() {
+    return {
+      user: '',
+    }
+  },
+  methods: {
+    async fetchUser() {
+      const response = await axios.post('https://api.klipwallet.com/v2/wallet/image');
+      this.user = response.data;
+      console.log(this.user,'this.user')
+    }
+  },
+  created() {
+    this.fetchUser();
+  },
 }
 </script>

@@ -66,5 +66,9 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+  },
+  axios: {
+    // 모듈 설정
+    baseURL: process.env.BASE_URL || 'your api server url'
   }
 }
