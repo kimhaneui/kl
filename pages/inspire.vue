@@ -8,16 +8,20 @@
       >
       <blockquote class="blockquote">
         <div>
-          <h2>카드 관리(Upload Image)</h2>
-          <p>{{image}}</p>
+          <h2>Klip 연동 QR</h2>
+          <img :src="image">
         </div>
+         <v-btn
+            color="primary"
+            nuxt
+            to="/inspire"
+            @click="onWeb()"
+          >
+            웹프라우저로 연결
+          </v-btn>
         <div>
-          <h2>Specification</h2>
-          <p>{{prepare}}</p>
-        </div>
-        <div>
-          <h2>Sign In</h2>
-          <p>{{auth}}</p>
+          <h2>request_key</h2>
+          <p>{{auth.request_key}}</p>
         </div>
         <footer>
           <small>
@@ -31,41 +35,65 @@
 
 <script>
 import axios from 'axios';
+import QRCode from 'qrcode'
+
 export default {
   name: 'InspirePage',
     data() {
     return {
       image: '',
       prepare: '',
+      auth: '',
+      cardInfo: '',
+      webUrl: ''
     }
   },
   methods: {
-    fetchUser() {
-      const response = axios.post('https://api.klipwallet.com/v2/wallet/image');
-      this.image = response.data;
-    },
     fetchPrepare() {
-      const response = axios.post('https://api.klipwallet.com/v2/a2a/prepare');
+      const url = 'https://a2a-api.klipwallet.com/v2/a2a/result?request_key='+ this.auth.request_key;
+       const headers = {
+        'Content-Type': 'application/json'
+      };
+      const response = axios.get(url,{headers});
       this.prepare = response.data;
     },
     fetchAuth() {
-      const response = axios.post('https://api.klipwallet.com/v2/partner/auth');
-      this.auth = response.data;
-      const url = 'https://api.klipwallet.com/v2/partner/auth';
-        const option = {
-            d: {"email":"ray.kim@groundx.xyz", "password":"C01069C9ABB6EA7DA49AE418A24BBEF3AD67170DDCD20AC7C76084A5A85E4057"},
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }
-        const res = fetch(url,option);
-        console.log(res,'res')
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+      const data = {"bapp": { "name" : "My BApp" }, "type": "auth" };
+      axios.post('https://a2a-api.klipwallet.com/v2/a2a/prepare',data,{headers}).then(res=>{
+        this.auth = res.data
+        this.webUrl = 'https://klipwallet.com/?target=/a2a?request_key='+ this.auth.request_key;
+        this.makeQr(this.webUrl)
+        this.fetchPrepare();
+        // this.getCard();
+      });
     },
-
+    onWeb(){
+      window.open(this.webUrl);
+    },
+    makeQr(urlList){
+      // With promises
+      QRCode.toDataURL(urlList)
+        .then(url => {
+          console.log(url)
+          this.image = url;
+        })
+        .catch(err => {
+          console.error(err)
+        })
+    },
+    getCard(){
+      const url = 'https://a2a-api.klipwallet.com/v2/a2a/cards?sca='+ this.auth.request_key;
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+      const response = axios.get(url,{headers});
+      this.cardInfo = response.data;
+    }
   },
   created() {
-    this.fetchUser();
-    this.fetchPrepare();
     this.fetchAuth();
   },
 }
