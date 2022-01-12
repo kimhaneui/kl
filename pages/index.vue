@@ -6,8 +6,8 @@
       </v-card>
       <v-card>
         <v-card-actions>
-          <v-spacer />
           <v-btn
+            class="btn"
             color="primary"
             nuxt
             to="/inspire"
@@ -19,7 +19,11 @@
     </v-col>
   </v-row>
 </template>
-
+<style scoped>
+.btn{
+  margin: auto;
+}
+</style>
 <script>
 export default {
   name: 'IndexPage'
