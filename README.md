@@ -24,3 +24,8 @@ For detailed explanation on how things work, check out the [documentation](https
 Using Nuxt.js & Vue.js
 klip 연동 및 QR 자동생성
 [관련 문서](https://docs.klipwallet.com/)
+
+### Documentation
+
+[klipwallet](https://docs.klipwallet.com/).
+[nuxtjs](https://nuxtjs.org).
